@@ -1,0 +1,6 @@
+{
+  "name": "Web Interactiva para Parejas",
+  "description": "Una página web interactiva y personalizada para compartir con tu pareja, novio o novia.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
