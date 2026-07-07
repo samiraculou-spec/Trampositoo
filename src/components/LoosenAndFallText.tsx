@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Sparkles } from "lucide-react";
+import { playTypewriterClick, playFallSound, playPortalSound } from "../App";
 
 interface LoosenAndFallTextProps {
   text: string;
@@ -27,6 +28,8 @@ export default function LoosenAndFallText({ text, onComplete }: LoosenAndFallTex
       const interval = setInterval(() => {
         setDisplayedCount((prev) => {
           if (prev < chars.length) {
+            const nextChar = chars[prev];
+            playTypewriterClick(nextChar === ' ');
             return prev + 1;
           } else {
             clearInterval(interval);
@@ -37,7 +40,7 @@ export default function LoosenAndFallText({ text, onComplete }: LoosenAndFallTex
       }, 70);
       return () => clearInterval(interval);
     }
-  }, [phase, chars.length]);
+  }, [phase, chars.length, chars]);
 
   // 2. Control other stages sequence
   useEffect(() => {
@@ -53,6 +56,7 @@ export default function LoosenAndFallText({ text, onComplete }: LoosenAndFallTex
       // Loose letters swing for 2.0 seconds, then one falls
       const timer = setTimeout(() => {
         setPhase("falling");
+        playFallSound();
       }, 2000);
       return () => clearTimeout(timer);
     }
@@ -61,6 +65,7 @@ export default function LoosenAndFallText({ text, onComplete }: LoosenAndFallTex
       // Gravity fall down to portal takes 1.6 seconds
       const timer = setTimeout(() => {
         setPhase("portal_entry");
+        playPortalSound();
       }, 1600);
       return () => clearTimeout(timer);
     }

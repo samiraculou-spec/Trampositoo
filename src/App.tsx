@@ -12,121 +12,136 @@ import WatchfulEyes from "./components/WatchfulEyes";
 
 /// Stick character with custom waving and walking joint animations
 function StickCharacter({ step }: { step: 'idle' | 'walking' | 'waving' | 'done' }) {
+  useEffect(() => {
+    if (step === 'walking') {
+      const interval = setInterval(() => {
+        playFootstepSound();
+      }, 400); // 0.8s cycle, so two steps per cycle
+      return () => clearInterval(interval);
+    }
+  }, [step]);
+
   return (
-    <div className="relative w-10 h-14 flex items-end justify-center select-none">
+    <div className="relative w-12 h-16 flex items-end justify-center select-none">
       {/* Subtle walking trail particles */}
       {step === 'walking' && (
         <div className="absolute inset-0 pointer-events-none">
           <motion.div
-            className="absolute bg-neutral-200/30 rounded-full w-1 h-1"
+            className="absolute bg-neutral-200/40 rounded-full w-1.5 h-1.5"
             animate={{
-              x: [-4, -16],
-              y: [8, 4, 10],
-              opacity: [0, 0.6, 0],
-              scale: [0.6, 1.0, 0.3]
+              x: [-4, -20],
+              y: [8, 2, 12],
+              opacity: [0, 0.8, 0],
+              scale: [0.8, 1.2, 0.3]
             }}
-            transition={{ repeat: Infinity, duration: 1.0, ease: "easeOut" }}
-            style={{ left: "4px", top: "28px" }}
+            transition={{ repeat: Infinity, duration: 0.8, ease: "easeOut" }}
+            style={{ left: "8px", top: "36px" }}
           />
         </div>
       )}
 
       <svg 
-        width="32" 
-        height="48" 
-        viewBox="0 0 32 48" 
+        width="40" 
+        height="56" 
+        viewBox="0 0 40 56" 
         fill="none" 
-        className="text-neutral-100"
+        className="text-neutral-100 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]"
       >
         {/* Whole body with optional walk bobbing */}
         <motion.g
           animate={
             step === 'walking'
-              ? { y: [0.6, 0, 0.6, 0, 0.6] }
-              : { y: [0, -0.4, 0] }
+              ? { y: [1, 0, 1, 0, 1] }
+              : { y: [0, -0.8, 0] }
           }
           transition={{ 
             repeat: Infinity, 
-            duration: step === 'walking' ? 0.8 : 2.0, 
+            duration: step === 'walking' ? 0.8 : 2.5, 
             ease: "easeInOut" 
           }}
         >
           {/* Head & Neck */}
           <g>
             {/* Elegant neck */}
-            <line x1="16" y1="13" x2="16" y2="16.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <line x1="20" y1="16" x2="20" y2="20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             
             {/* Hollow head */}
             <circle 
-              cx="16" 
-              cy="9.5" 
-              r="3.5" 
+              cx="20" 
+              cy="12" 
+              r="4.5" 
               fill="none" 
               stroke="currentColor" 
-              strokeWidth="1.5" 
+              strokeWidth="2" 
             />
 
-            {/* Graceful minimalist ponytail */}
-            <motion.path 
-              d="M 19.5 9 C 23 9, 23.5 15, 21.5 17" 
-              fill="none" 
-              stroke="currentColor" 
-              strokeWidth="1.3" 
-              strokeLinecap="round"
-              animate={step === 'walking' ? { rotate: [-8, 8, -8] } : { rotate: [-2, 2, -2] }}
-              transition={{ repeat: Infinity, duration: 0.4, ease: "easeInOut" }}
-              style={{ originX: "19.5px", originY: "9px" }}
-            />
+            {/* Cute Wizard Hat */}
+            <motion.g
+              animate={step === 'walking' ? { rotate: [-5, 5, -5], y: [-0.5, 0.5, -0.5] } : { rotate: [-1, 1, -1] }}
+              transition={{ repeat: Infinity, duration: step === 'walking' ? 0.4 : 2, ease: "easeInOut" }}
+              style={{ originX: "20px", originY: "7px" }}
+            >
+              <path d="M 14 7 L 26 7 L 20 0 Z" fill="currentColor" opacity="0.9" />
+              <line x1="12" y1="7" x2="28" y2="7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </motion.g>
 
-            {/* Cute sleeping eyes */}
-            <path 
-              d="M 14.8 9.5 C 15.2 10.2, 15.8 10.2, 16.2 9.5" 
-              stroke="currentColor" 
-              strokeWidth="0.8" 
-              strokeLinecap="round" 
-              fill="none" 
-            />
+            {/* Awake/Happy eyes when active, sleeping when done/idle */}
+            {step === 'waving' || step === 'walking' ? (
+              <>
+                <circle cx="18" cy="11.5" r="0.6" fill="currentColor" />
+                <circle cx="22" cy="11.5" r="0.6" fill="currentColor" />
+              </>
+            ) : (
+              <path 
+                d="M 18.5 12 C 19 12.5, 19.5 12.5, 20 12" 
+                stroke="currentColor" 
+                strokeWidth="1" 
+                strokeLinecap="round" 
+                fill="none" 
+              />
+            )}
+            
             {/* Smile */}
             <path 
-              d="M 15.2 11.2 Q 16 12 16.8 11.2" 
+              d="M 19 13.5 Q 20 14.5 21 13.5" 
               stroke="currentColor" 
-              strokeWidth="0.8" 
+              strokeWidth="1" 
               strokeLinecap="round" 
               fill="none" 
             />
           </g>
 
-          {/* Torso & Elegant Dress/Skirt outline */}
+          {/* Torso & Elegant Cloak outline */}
           <path 
-            d="M 14.5 16.5 L 17.5 16.5 L 20.5 30 L 11.5 30 Z" 
+            d="M 18 20 L 22 20 L 26 38 L 14 38 Z" 
             fill="none" 
             stroke="currentColor" 
-            strokeWidth="1.5" 
+            strokeWidth="2" 
             strokeLinecap="round" 
             strokeLinejoin="round"
           />
 
           {/* Left Arm */}
           <motion.g
-            style={{ originX: "14.5px", originY: "16.5px" }}
+            style={{ originX: "18px", originY: "20px" }}
             animate={
               step === 'walking'
-                ? { rotate: [-25, 0, 25, -10, -25] }
+                ? { rotate: [-30, 0, 30, -10, -30] }
                 : { rotate: [-4, 4, -4] }
             }
             transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
           >
-            <line x1="14.5" y1="16.5" x2="11" y2="24.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <line x1="18" y1="20" x2="13" y2="30" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
           </motion.g>
 
           {/* Right Arm (Waving or Walking) */}
           <motion.g
-            style={{ originX: "17.5px", originY: "16.5px" }}
+            style={{ originX: "22px", originY: "20px" }}
             animate={
               step === 'waving'
-                ? { rotate: [-145, -115, -145] } // Elevated elegant wave
+                ? { rotate: [-150, -110, -150] } 
                 : step === 'walking'
-                ? { rotate: [25, -10, -25, 0, 25] }
+                ? { rotate: [30, -10, -30, 0, 30] }
                 : { rotate: [4, -4, 4] }
             }
             transition={{ 
@@ -135,64 +150,68 @@ function StickCharacter({ step }: { step: 'idle' | 'walking' | 'waving' | 'done'
               ease: "easeInOut" 
             }}
           >
-            <line x1="17.5" y1="16.5" x2="21" y2="24.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            {/* Magic Wand in hand if waving */}
+            {step === 'waving' && (
+              <line x1="26" y1="30" x2="32" y2="24" stroke="#fcd34d" strokeWidth="1.5" strokeLinecap="round" />
+            )}
+            <line x1="22" y1="20" x2="27" y2="30" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
           </motion.g>
 
           {/* Left Leg (Walking) */}
           <motion.g
-            style={{ originX: "13.5px", originY: "30px" }}
+            style={{ originX: "17px", originY: "38px" }}
             animate={
               step === 'walking'
-                ? { rotate: [20, 0, -20, 5, 20] }
+                ? { rotate: [25, 0, -20, 10, 25] }
                 : {}
             }
             transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
           >
             {/* Left Thigh */}
-            <line x1="13.5" y1="30" x2="13.5" y2="37.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <line x1="17" y1="38" x2="17" y2="46" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             
             {/* Left Knee & Calf */}
             <motion.g
-              style={{ originX: "13.5px", originY: "37.5px" }}
+              style={{ originX: "17px", originY: "46px" }}
               animate={
                 step === 'walking'
-                  ? { rotate: [-30, 0, 0, -45, -30] }
+                  ? { rotate: [-30, 0, 0, -50, -30] }
                   : {}
               }
               transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
             >
-              <line x1="13.5" y1="37.5" x2="13.5" y2="45" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              <line x1="17" y1="46" x2="17" y2="54" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
               {/* Foot */}
-              <line x1="13.5" y1="45" x2="11.5" y2="45" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              <line x1="17" y1="54" x2="14" y2="54" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </motion.g>
           </motion.g>
 
           {/* Right Leg (Walking) */}
           <motion.g
-            style={{ originX: "18.5px", originY: "30px" }}
+            style={{ originX: "23px", originY: "38px" }}
             animate={
               step === 'walking'
-                ? { rotate: [-20, 5, 20, 0, -20] }
+                ? { rotate: [-20, 10, 25, 0, -20] }
                 : {}
             }
             transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
           >
             {/* Right Thigh */}
-            <line x1="18.5" y1="30" x2="18.5" y2="37.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <line x1="23" y1="38" x2="23" y2="46" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             
             {/* Right Knee & Calf */}
             <motion.g
-              style={{ originX: "18.5px", originY: "37.5px" }}
+              style={{ originX: "23px", originY: "46px" }}
               animate={
                 step === 'walking'
-                  ? { rotate: [0, -45, -30, 0, 0] }
+                  ? { rotate: [0, -50, -30, 0, 0] }
                   : {}
               }
               transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
             >
-              <line x1="18.5" y1="37.5" x2="18.5" y2="45" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              <line x1="23" y1="46" x2="23" y2="54" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
               {/* Foot */}
-              <line x1="18.5" y1="45" x2="20.5" y2="45" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              <line x1="23" y1="54" x2="26" y2="54" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </motion.g>
           </motion.g>
         </motion.g>
@@ -201,7 +220,222 @@ function StickCharacter({ step }: { step: 'idle' | 'walking' | 'waving' | 'done'
   );
 }
 
-let globalAudioCtx: AudioContext | null = null;
+export let globalAudioCtx: AudioContext | null = null;
+
+export const playFootstepSound = () => {
+  try {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContextClass) return;
+    
+    if (!globalAudioCtx) {
+      globalAudioCtx = new AudioContextClass();
+    }
+    const ctx = globalAudioCtx;
+    if (ctx.state === 'suspended') ctx.resume();
+
+    const now = ctx.currentTime;
+    
+    // Short thud noise
+    const bufferSize = Math.floor(ctx.sampleRate * 0.05); 
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+
+    const noiseFilter = ctx.createBiquadFilter();
+    noiseFilter.type = 'lowpass';
+    noiseFilter.frequency.setValueAtTime(300, now); 
+
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(0.3, now); 
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+
+    noise.connect(noiseFilter);
+    noiseFilter.connect(noiseGain);
+    noiseGain.connect(ctx.destination);
+
+    noise.start(now);
+    noise.stop(now + 0.05);
+  } catch (err) {}
+};
+
+export const playTypewriterClick = (isSpace = false) => {
+  try {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContextClass) return;
+    
+    if (!globalAudioCtx) {
+      globalAudioCtx = new AudioContextClass();
+    }
+    const ctx = globalAudioCtx;
+
+    if (ctx.state === 'suspended') {
+      ctx.resume();
+    }
+
+    const now = ctx.currentTime;
+    
+    // 1. Mechanical noise click
+    const bufferSize = Math.floor(ctx.sampleRate * 0.04); 
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+
+    const noiseFilter = ctx.createBiquadFilter();
+    noiseFilter.type = 'highpass';
+    noiseFilter.frequency.setValueAtTime(isSpace ? 800 : 1500, now); 
+
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(isSpace ? 0.6 : 0.4, now); 
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+
+    noise.connect(noiseFilter);
+    noiseFilter.connect(noiseGain);
+    noiseGain.connect(ctx.destination);
+
+    // 2. Tonal ping (body)
+    const osc = ctx.createOscillator();
+    const oscGain = ctx.createGain();
+    
+    const pitch = isSpace ? (180 + Math.random() * 30) : (280 + Math.random() * 80);
+    osc.type = isSpace ? 'triangle' : 'sine';
+    osc.frequency.setValueAtTime(pitch, now);
+
+    oscGain.gain.setValueAtTime(isSpace ? 0.8 : 0.6, now);
+    oscGain.gain.exponentialRampToValueAtTime(0.001, now + (isSpace ? 0.04 : 0.03));
+
+    osc.connect(oscGain);
+    oscGain.connect(ctx.destination);
+
+    noise.start(now);
+    osc.start(now);
+    
+    noise.stop(now + 0.04);
+    osc.stop(now + 0.04);
+  } catch (err) {
+    console.error("Audio error", err);
+  }
+};
+
+const playUIClick = () => {
+  try {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContextClass) return;
+    
+    if (!globalAudioCtx) {
+      globalAudioCtx = new AudioContextClass();
+    }
+    const ctx = globalAudioCtx;
+
+    if (ctx.state === 'suspended') {
+      ctx.resume();
+    }
+
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(600, now);
+    osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+
+    gain.gain.setValueAtTime(0.7, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.1);
+  } catch (err) {
+    console.error("Audio error", err);
+  }
+};
+
+export const playFallSound = () => {
+  try {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContextClass) return;
+    
+    if (!globalAudioCtx) {
+      globalAudioCtx = new AudioContextClass();
+    }
+    const ctx = globalAudioCtx;
+    if (ctx.state === 'suspended') ctx.resume();
+
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'sine';
+    // Frequency sweeps down
+    osc.frequency.setValueAtTime(400, now);
+    osc.frequency.exponentialRampToValueAtTime(50, now + 1.5);
+
+    gain.gain.setValueAtTime(0.5, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 1.5);
+  } catch (err) {}
+};
+
+export const playPortalSound = () => {
+  try {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContextClass) return;
+    
+    if (!globalAudioCtx) {
+      globalAudioCtx = new AudioContextClass();
+    }
+    const ctx = globalAudioCtx;
+    if (ctx.state === 'suspended') ctx.resume();
+
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+
+    osc.type = 'sawtooth';
+    osc2.type = 'square';
+    
+    // Frequency sweeps up
+    osc.frequency.setValueAtTime(50, now);
+    osc.frequency.exponentialRampToValueAtTime(800, now + 2.0);
+    
+    osc2.frequency.setValueAtTime(55, now);
+    osc2.frequency.exponentialRampToValueAtTime(850, now + 2.0);
+
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(100, now);
+    filter.frequency.exponentialRampToValueAtTime(3000, now + 2.0);
+
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.3, now + 1.0);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 2.4);
+
+    osc.connect(filter);
+    osc2.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc2.start(now);
+    osc.stop(now + 2.4);
+    osc2.stop(now + 2.4);
+  } catch (err) {}
+};
 
 const playChaosSound = (soundType: 'explosion' | 'squeak' | 'duck' | 'xpError' | 'heartbeat') => {
   try {
@@ -218,7 +452,7 @@ const playChaosSound = (soundType: 'explosion' | 'squeak' | 'duck' | 'xpError' |
     }
 
     if (soundType === 'explosion') {
-      // Create a burst of low-pass noise for explosion
+      // Create a burst of noise for explosion (Suspiro de Val) - made louder & brighter
       const bufferSize = ctx.sampleRate * 1.5;
       const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
       const data = buffer.getChannelData(0);
@@ -231,25 +465,25 @@ const playChaosSound = (soundType: 'explosion' | 'squeak' | 'duck' | 'xpError' |
 
       const filter = ctx.createBiquadFilter();
       filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(600, ctx.currentTime);
-      filter.frequency.exponentialRampToValueAtTime(10, ctx.currentTime + 1.0);
+      filter.frequency.setValueAtTime(1000, ctx.currentTime); // increased from 600 to 1000 for better mid-range presence
+      filter.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 1.2);
 
       const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.4, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.2);
+      gain.gain.setValueAtTime(0.85, ctx.currentTime); // increased from 0.4 to 0.85
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.3);
 
       noise.connect(filter);
       filter.connect(gain);
       gain.connect(ctx.destination);
 
-      // Low frequency sub-bass sweep
+      // Bass punch
       const osc = ctx.createOscillator();
       const oscGain = ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(120, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(20, ctx.currentTime + 0.4);
+      osc.frequency.setValueAtTime(160, ctx.currentTime); // shifted slightly up for speaker compatibility
+      osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.45);
 
-      oscGain.gain.setValueAtTime(0.5, ctx.currentTime);
+      oscGain.gain.setValueAtTime(0.85, ctx.currentTime); // increased from 0.5 to 0.85
       oscGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
 
       osc.connect(oscGain);
@@ -257,26 +491,42 @@ const playChaosSound = (soundType: 'explosion' | 'squeak' | 'duck' | 'xpError' |
 
       noise.start();
       osc.start();
-      noise.stop(ctx.currentTime + 1.3);
+      noise.stop(ctx.currentTime + 1.4);
       osc.stop(ctx.currentTime + 0.55);
     } else if (soundType === 'squeak') {
-      // Funny squeak sound / cartoon laser sweep (used for Grito de fangirl)
-      const osc = ctx.createOscillator();
+      // Funny squeak sound / cartoon laser sweep (used for Grito de fangirl) - amplified and thickened with dual oscillators
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
       const gain = ctx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(350, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(1400, ctx.currentTime + 0.2);
+      
+      osc1.type = 'triangle';
+      osc1.frequency.setValueAtTime(350, ctx.currentTime);
+      osc1.frequency.exponentialRampToValueAtTime(1400, ctx.currentTime + 0.22);
 
-      gain.gain.setValueAtTime(0.2, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.22);
+      // Detuned second oscillator for thick chorus effect
+      osc2.type = 'sawtooth';
+      osc2.frequency.setValueAtTime(360, ctx.currentTime);
+      osc2.frequency.exponentialRampToValueAtTime(1420, ctx.currentTime + 0.22);
 
-      osc.connect(gain);
+      // Lowpass filter to keep sawtooth from sounding too harsh but retaining the rich harmonics
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(2000, ctx.currentTime);
+
+      gain.gain.setValueAtTime(0.75, ctx.currentTime); // increased from 0.2 to 0.75
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.24);
+
+      osc1.connect(gain);
+      osc2.connect(filter);
+      filter.connect(gain);
       gain.connect(ctx.destination);
 
-      osc.start();
-      osc.stop(ctx.currentTime + 0.22);
+      osc1.start();
+      osc2.start();
+      osc1.stop(ctx.currentTime + 0.24);
+      osc2.stop(ctx.currentTime + 0.24);
     } else if (soundType === 'duck') {
-      // Adorable duck quack sound (used for Risa malvada)
+      // Adorable duck quack sound (used for Risa malvada) - amplified and enhanced
       const playQuack = (delay: number) => {
         const osc1 = ctx.createOscillator();
         const osc2 = ctx.createOscillator();
@@ -296,13 +546,13 @@ const playChaosSound = (soundType: 'explosion' | 'squeak' | 'duck' | 'xpError' |
         osc2.frequency.exponentialRampToValueAtTime(285, t + 0.12);
 
         filter.type = 'bandpass';
-        filter.Q.setValueAtTime(6, t);
-        filter.frequency.setValueAtTime(800, t);
-        filter.frequency.exponentialRampToValueAtTime(1300, t + 0.05);
-        filter.frequency.exponentialRampToValueAtTime(750, t + 0.12);
+        filter.Q.setValueAtTime(5, t);
+        filter.frequency.setValueAtTime(900, t);
+        filter.frequency.exponentialRampToValueAtTime(1400, t + 0.05);
+        filter.frequency.exponentialRampToValueAtTime(800, t + 0.12);
 
         gain.gain.setValueAtTime(0, t);
-        gain.gain.linearRampToValueAtTime(0.2, t + 0.015);
+        gain.gain.linearRampToValueAtTime(0.85, t + 0.015); // increased from 0.2 to 0.85
         gain.gain.exponentialRampToValueAtTime(0.005, t + 0.14);
 
         osc1.connect(filter);
@@ -319,40 +569,73 @@ const playChaosSound = (soundType: 'explosion' | 'squeak' | 'duck' | 'xpError' |
       playQuack(0);
       playQuack(0.12);
     } else if (soundType === 'xpError') {
-      // Classic Windows XP Error chime chord (used for Te quiero mucho)
+      // Classic Windows XP Error chime chord (used for Te quiero mucho) - boosted and enriched
       const playTone = (freq: number, duration: number, startDelay: number) => {
-        const osc = ctx.createOscillator();
+        const osc1 = ctx.createOscillator();
+        const osc2 = ctx.createOscillator(); // detuned octave helper for fullness
         const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, ctx.currentTime + startDelay);
         
-        gain.gain.setValueAtTime(0.12, ctx.currentTime + startDelay);
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(freq, ctx.currentTime + startDelay);
+
+        osc2.type = 'triangle';
+        osc2.frequency.setValueAtTime(freq * 2, ctx.currentTime + startDelay); // Octave higher
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1200, ctx.currentTime);
+        
+        gain.gain.setValueAtTime(0.55, ctx.currentTime + startDelay); // increased from 0.12
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + startDelay + duration);
 
-        osc.connect(gain);
+        osc1.connect(gain);
+        osc2.connect(filter);
+        filter.connect(gain);
         gain.connect(ctx.destination);
-        osc.start(ctx.currentTime + startDelay);
-        osc.stop(ctx.currentTime + startDelay + duration);
+
+        osc1.start(ctx.currentTime + startDelay);
+        osc2.start(ctx.currentTime + startDelay);
+        osc1.stop(ctx.currentTime + startDelay + duration);
+        osc2.stop(ctx.currentTime + startDelay + duration);
       };
       
-      playTone(135, 0.35, 0);
-      playTone(135, 0.35, 0.03);
+      // Beautiful harmonic interval chime
+      playTone(150, 0.45, 0);
+      playTone(225, 0.45, 0.04); // Perfect fifth chime
     } else if (soundType === 'heartbeat') {
-      // Realistic double heartbeat thump
+      // Heartbeat thump optimized for phone/laptop speakers
       const playBeat = (time: number, isDub: boolean) => {
-        const osc = ctx.createOscillator();
+        const oscSine = ctx.createOscillator();
+        const oscTri = ctx.createOscillator();
+        const filter = ctx.createBiquadFilter();
         const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(isDub ? 55 : 45, time);
-        osc.frequency.exponentialRampToValueAtTime(10, time + 0.15);
 
-        gain.gain.setValueAtTime(0.5, time);
-        gain.gain.exponentialRampToValueAtTime(0.01, time + 0.16);
+        // Base sine wave for deep low end
+        oscSine.type = 'sine';
+        oscSine.frequency.setValueAtTime(isDub ? 90 : 80, time); // increased from 45/55 to 80/90 for audibility
+        oscSine.frequency.exponentialRampToValueAtTime(20, time + 0.15);
 
-        osc.connect(gain);
+        // Triangle wave for audible mid-range harmonics on small speakers
+        oscTri.type = 'triangle';
+        oscTri.frequency.setValueAtTime(isDub ? 90 : 80, time);
+        oscTri.frequency.exponentialRampToValueAtTime(20, time + 0.15);
+
+        // Lowpass to filter out high triangle buzz, keeping only clean warm mid thumps
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(150, time); // only let frequencies below 150Hz pass
+
+        gain.gain.setValueAtTime(0.95, time); // high gain
+        gain.gain.exponentialRampToValueAtTime(0.01, time + 0.18);
+
+        oscSine.connect(gain);
+        oscTri.connect(filter);
+        filter.connect(gain);
         gain.connect(ctx.destination);
-        osc.start(time);
-        osc.stop(time + 0.18);
+
+        oscSine.start(time);
+        oscTri.start(time);
+        oscSine.stop(time + 0.19);
+        oscTri.stop(time + 0.19);
       };
 
       const now = ctx.currentTime;
@@ -394,6 +677,7 @@ export default function App() {
   const [gameStep, setGameStep] = useState<'welcome' | 'qA' | 'qB' | 'qC' | 'success' | 'soundboard' | 'mirror_intro' | 'mirror_typing' | 'mirror_input' | 'mirror_sent' | 'mirror_credits'>('welcome');
   const [wrongAttempt, setWrongAttempt] = useState(false);
   const [showFavColorWarning, setShowFavColorWarning] = useState(false);
+  const [heartbeatPressed, setHeartbeatPressed] = useState(false);
 
   // Mirror Game States (Modo Espejo) - NO emojis used
   const [musicPlaying, setMusicPlaying] = useState(false);
@@ -424,6 +708,11 @@ export default function App() {
     const interval = setInterval(() => {
       currentLength++;
       setMirrorTypedText(phrase.slice(0, currentLength));
+      
+      // Play typewriter click sound on each typed character
+      if (currentLength - 1 < phrase.length) {
+        playTypewriterClick(phrase[currentLength - 1] === ' ');
+      }
 
       if (currentLength >= phrase.length) {
         clearInterval(interval);
@@ -634,7 +923,9 @@ export default function App() {
       let currentIndex = 0;
       const interval = setInterval(() => {
         if (currentIndex < fullText.length) {
+          const nextChar = fullText[currentIndex];
           setDisplayedText(fullText.substring(0, currentIndex + 1));
+          playTypewriterClick(nextChar === ' ');
           currentIndex++;
         } else {
           clearInterval(interval);
@@ -754,6 +1045,9 @@ export default function App() {
 
   const handleStartTransition = () => {
     if (!name.trim()) return;
+    
+    playUIClick();
+
     if (escapeActive) {
       if (!hasHoveredButton) {
         setHasHoveredButton(true);
@@ -1466,7 +1760,7 @@ export default function App() {
                               whileHover={{ scale: 1.05, boxShadow: "0px 0px 20px rgba(236, 72, 153, 0.4)" }}
                               whileTap={{ scale: 0.95 }}
                               onClick={() => {
-                                setGameStep('qA');
+                                playUIClick(); setGameStep('qA');
                                 setWrongAttempt(false);
                               }}
                               className="bg-pink-500 hover:bg-pink-600 text-white px-10 py-4 rounded-full text-xs font-extrabold uppercase tracking-[0.25em] shadow-lg cursor-pointer transition-all duration-300 border border-pink-400"
@@ -1501,7 +1795,7 @@ export default function App() {
                           whileTap={{ scale: 0.98 }}
                           onClick={() => {
                             setWrongAttempt(false);
-                            setGameStep('qB');
+                            playUIClick(); setGameStep('qB');
                           }}
                           className="bg-pink-50 hover:bg-pink-100 border border-pink-200 text-pink-900 font-bold rounded-2xl py-3 px-6 text-sm tracking-wide shadow-sm transition-all cursor-pointer"
                         >
@@ -1511,7 +1805,7 @@ export default function App() {
                         <motion.button
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          onClick={() => setWrongAttempt(true)}
+                          onClick={() => { playChaosSound('xpError'); setWrongAttempt(true); }}
                           className="bg-pink-50 hover:bg-pink-100 border border-pink-200 text-pink-900 font-bold rounded-2xl py-3 px-6 text-sm tracking-wide shadow-sm transition-all cursor-pointer"
                         >
                           Vale
@@ -1554,7 +1848,7 @@ export default function App() {
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           onClick={() => {
-                            setWrongAttempt(true);
+                            playChaosSound('xpError'); setWrongAttempt(true);
                             setShowFavColorWarning(false);
                           }}
                           className="bg-pink-50 hover:bg-pink-100 border border-pink-200 text-pink-900 font-bold rounded-2xl py-3 px-6 text-sm tracking-wide shadow-sm transition-all cursor-pointer"
@@ -1578,7 +1872,7 @@ export default function App() {
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           onClick={() => {
-                            setWrongAttempt(true);
+                            playChaosSound('xpError'); setWrongAttempt(true);
                             setShowFavColorWarning(false);
                           }}
                           className="bg-pink-50 hover:bg-pink-100 border border-pink-200 text-pink-900 font-bold rounded-2xl py-3 px-6 text-sm tracking-wide shadow-sm transition-all cursor-pointer"
@@ -1617,7 +1911,7 @@ export default function App() {
                               whileTap={{ scale: 0.95 }}
                               onClick={() => {
                                 setShowFavColorWarning(false);
-                                setGameStep('qC');
+                                playUIClick(); setGameStep('qC');
                                 setWrongAttempt(false);
                               }}
                               className="bg-pink-600 text-white font-extrabold text-xs uppercase tracking-[0.15em] px-5 py-2.5 rounded-full hover:bg-pink-700 cursor-pointer shadow-md transition-all duration-200"
@@ -1655,7 +1949,7 @@ export default function App() {
                           whileTap={{ scale: 0.98 }}
                           onClick={() => {
                             setWrongAttempt(false);
-                            setGameStep('success');
+                            playUIClick(); setGameStep('success');
                           }}
                           className="bg-pink-50 hover:bg-pink-100 border border-pink-200 text-pink-900 font-bold rounded-2xl py-3 px-6 text-sm tracking-wide shadow-sm transition-all cursor-pointer"
                         >
@@ -1665,7 +1959,7 @@ export default function App() {
                         <motion.button
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          onClick={() => setWrongAttempt(true)}
+                          onClick={() => { playChaosSound('xpError'); setWrongAttempt(true); }}
                           className="bg-pink-50 hover:bg-pink-100 border border-pink-200 text-pink-900 font-bold rounded-2xl py-3 px-6 text-sm tracking-wide shadow-sm transition-all cursor-pointer"
                         >
                           30/05
@@ -1674,7 +1968,7 @@ export default function App() {
                         <motion.button
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          onClick={() => setWrongAttempt(true)}
+                          onClick={() => { playChaosSound('xpError'); setWrongAttempt(true); }}
                           className="bg-pink-50 hover:bg-pink-100 border border-pink-200 text-pink-900 font-bold rounded-2xl py-3 px-6 text-sm tracking-wide shadow-sm transition-all cursor-pointer"
                         >
                           14/10
@@ -1748,64 +2042,97 @@ export default function App() {
                         </p>
                       </div>
 
-                      {/* Soundboard grid */}
-                      <div className="grid grid-cols-2 gap-4 w-full max-w-sm pt-2">
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => playChaosSound('explosion')}
-                          className="bg-pink-50 hover:bg-pink-100 border-2 border-pink-200 text-pink-950 font-bold rounded-2xl p-4 text-xs tracking-wider shadow-sm transition-all cursor-pointer flex flex-col items-center space-y-2 h-24 justify-center"
-                        >
-                          <span className="text-2xl">🌬️</span>
-                          <span className="text-center leading-tight">Suspiro de Val</span>
-                        </motion.button>
-
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => playChaosSound('squeak')}
-                          className="bg-pink-50 hover:bg-pink-100 border-2 border-pink-200 text-pink-950 font-bold rounded-2xl p-4 text-xs tracking-wider shadow-sm transition-all cursor-pointer flex flex-col items-center space-y-2 h-24 justify-center"
-                        >
-                          <span className="text-2xl">📣</span>
-                          <span className="text-center leading-tight">Grito de fangirl</span>
-                        </motion.button>
-
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => playChaosSound('duck')}
-                          className="bg-pink-50 hover:bg-pink-100 border-2 border-pink-200 text-pink-950 font-bold rounded-2xl p-4 text-xs tracking-wider shadow-sm transition-all cursor-pointer flex flex-col items-center space-y-2 h-24 justify-center"
-                        >
-                          <span className="text-2xl">😈</span>
-                          <span className="text-center leading-tight">Risa malvada</span>
-                        </motion.button>
-
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => playChaosSound('xpError')}
-                          className="bg-pink-50 hover:bg-pink-100 border-2 border-pink-200 text-pink-950 font-bold rounded-2xl p-4 text-xs tracking-wider shadow-sm transition-all cursor-pointer flex flex-col items-center space-y-2 h-24 justify-center"
-                        >
-                          <span className="text-2xl">💬</span>
-                          <span className="text-center leading-tight">Te quiero mucho</span>
-                        </motion.button>
-                      </div>
-
-                      {/* Remate / Punchline - NO heart emojis */}
-                      <div className="pt-5 border-t border-pink-200/60 w-full text-center flex flex-col items-center space-y-4">
-                        <p className="font-sans font-extrabold text-pink-900 text-xs sm:text-sm leading-relaxed max-w-sm px-2">
-                          ¿Te esperabas otra cosa? ¡Sorpresa! El único sonido real es el de mi corazón por ti (qué cursi, lo sé)
-                        </p>
-                        
-                        <div className="flex flex-col sm:flex-row gap-3 w-full justify-center">
+                      {/* Soundboard grid or Heartbeat message */}
+                      {!heartbeatPressed ? (
+                        <div className="grid grid-cols-2 gap-4 w-full max-w-sm pt-2">
                           <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            onClick={() => playChaosSound('heartbeat')}
+                            onClick={() => playChaosSound('explosion')}
+                            className="bg-pink-50 hover:bg-pink-100 border-2 border-pink-200 text-pink-950 font-bold rounded-2xl p-4 text-xs tracking-wider shadow-sm transition-all cursor-pointer flex flex-col items-center space-y-2 h-24 justify-center"
+                          >
+                            <span className="text-2xl">🌬️</span>
+                            <span className="text-center leading-tight">Suspiro de Val</span>
+                          </motion.button>
+
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => playChaosSound('squeak')}
+                            className="bg-pink-50 hover:bg-pink-100 border-2 border-pink-200 text-pink-950 font-bold rounded-2xl p-4 text-xs tracking-wider shadow-sm transition-all cursor-pointer flex flex-col items-center space-y-2 h-24 justify-center"
+                          >
+                            <span className="text-2xl">📣</span>
+                            <span className="text-center leading-tight">Grito de fangirl</span>
+                          </motion.button>
+
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => playChaosSound('duck')}
+                            className="bg-pink-50 hover:bg-pink-100 border-2 border-pink-200 text-pink-950 font-bold rounded-2xl p-4 text-xs tracking-wider shadow-sm transition-all cursor-pointer flex flex-col items-center space-y-2 h-24 justify-center"
+                          >
+                            <span className="text-2xl">😈</span>
+                            <span className="text-center leading-tight">Risa malvada</span>
+                          </motion.button>
+
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => playChaosSound('xpError')}
+                            className="bg-pink-50 hover:bg-pink-100 border-2 border-pink-200 text-pink-950 font-bold rounded-2xl p-4 text-xs tracking-wider shadow-sm transition-all cursor-pointer flex flex-col items-center space-y-2 h-24 justify-center"
+                          >
+                            <span className="text-2xl">💬</span>
+                            <span className="text-center leading-tight">Te quiero mucho</span>
+                          </motion.button>
+                        </div>
+                      ) : (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="w-full max-w-sm p-6 bg-pink-100 rounded-2xl border-2 border-pink-200 shadow-inner flex flex-col items-center justify-center space-y-4 min-h-[200px]"
+                        >
+                          <motion.div
+                            animate={{ scale: [1, 1.15, 1] }}
+                            transition={{ repeat: Infinity, duration: 0.7, ease: "easeInOut" }}
+                            className="w-12 h-12 text-pink-600 flex items-center justify-center"
+                          >
+                            <svg className="w-10 h-10 fill-current" viewBox="0 0 24 24">
+                              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                            </svg>
+                          </motion.div>
+                          <p className="font-sans font-extrabold text-pink-950 text-sm md:text-base tracking-wide leading-relaxed text-center px-2">
+                            ¿Te esperabas otra cosa? ¡Sorpresa! El único sonido real es el de mi corazón por ti (qué cursi, lo sé)
+                          </p>
+                        </motion.div>
+                      )}
+
+                      {/* Remate / Control area */}
+                      <div className="pt-5 border-t border-pink-200/60 w-full text-center flex flex-col items-center space-y-4">
+                        <div className="flex flex-col sm:flex-row gap-3 w-full justify-center items-center">
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => {
+                              playChaosSound('heartbeat');
+                              setHeartbeatPressed(true);
+                            }}
                             className="bg-pink-600 hover:bg-pink-700 text-white font-extrabold text-[10px] uppercase tracking-[0.2em] px-5 py-3 rounded-full cursor-pointer shadow-md transition-all duration-200"
                           >
                             <span>Escuchar mi corazón</span>
                           </motion.button>
+
+                          {heartbeatPressed && (
+                            <motion.button
+                              initial={{ opacity: 0, scale: 0.9 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              onClick={() => setHeartbeatPressed(false)}
+                              className="bg-pink-200 hover:bg-pink-300 text-pink-900 font-extrabold text-[10px] uppercase tracking-[0.2em] px-5 py-3 rounded-full cursor-pointer shadow-md transition-all duration-200 border border-pink-300"
+                            >
+                              <span>Volver a los sonidos</span>
+                            </motion.button>
+                          )}
 
                           <motion.button
                             whileHover={{ scale: 1.05 }}

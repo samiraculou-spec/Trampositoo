@@ -152,7 +152,7 @@ export default function LetterEnvelope({ name, onClose }: LetterEnvelopeProps) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: -30 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full max-w-lg bg-gradient-to-b from-stone-50 via-amber-50/50 to-stone-100 text-stone-900 rounded-2xl p-6 sm:p-10 shadow-[0_30px_70px_rgba(0,0,0,0.9)] border-2 border-amber-800/10 relative overflow-hidden flex flex-col justify-between"
+            className="w-full max-w-lg bg-gradient-to-b from-stone-50 via-amber-50/50 to-stone-100 text-stone-900 rounded-2xl p-6 sm:p-10 shadow-[0_30px_70px_rgba(0,0,0,0.9)] border-2 border-amber-800/10 relative overflow-hidden flex flex-col justify-between max-h-[85vh] sm:max-h-[80vh]"
           >
             {/* Elegant Double Gold Frame on the Parchment Paper */}
             <div className="absolute inset-3 rounded-lg border border-amber-600/15 pointer-events-none" />
@@ -171,98 +171,100 @@ export default function LetterEnvelope({ name, onClose }: LetterEnvelopeProps) {
               </svg>
             </div>
 
-            {/* Letter Header */}
-            <div className="relative z-10 flex justify-between items-start border-b border-amber-900/10 pb-4 mb-5">
-              <div className="text-left">
-                <h3 className="font-serif italic text-2xl sm:text-3xl text-stone-900 font-semibold tracking-wide pr-4">
-                  Atención, {formattedName}
-                </h3>
-                <p className="text-[9px] font-bold tracking-[0.25em] uppercase text-amber-800 mt-1.5 flex items-center gap-1.5 font-sans">
-                  <Star className="w-2.5 h-2.5 text-amber-700 fill-amber-700" />
-                  Bajo advertencia no hay engaño
+            {/* Scrollable letter content container to ensure it fits any screen nicely */}
+            <div className="overflow-y-auto flex-1 pr-1.5 sm:pr-2.5 relative z-10 scrollbar-thin scrollbar-thumb-amber-900/20 scrollbar-track-transparent max-h-full space-y-6">
+              {/* Letter Header */}
+              <div className="flex justify-between items-start border-b border-amber-900/10 pb-4">
+                <div className="text-left">
+                  <h3 className="font-serif italic text-2xl sm:text-3xl text-stone-900 font-semibold tracking-wide pr-4">
+                    Atención, {formattedName}
+                  </h3>
+                  <p className="text-[9px] font-bold tracking-[0.25em] uppercase text-amber-800 mt-1.5 flex items-center gap-1.5 font-sans">
+                    <Star className="w-2.5 h-2.5 text-amber-700 fill-amber-700" />
+                    Bajo advertencia no hay engaño
+                  </p>
+                </div>
+                
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    onClose?.();
+                  }}
+                  className="p-1.5 rounded-full hover:bg-stone-200/60 text-stone-400 hover:text-stone-850 transition-colors duration-250 cursor-pointer relative z-20"
+                  title="Cerrar pacto"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Letter Body (Mocking & warning content with exquisite typography) */}
+              <div className="text-left font-serif text-sm sm:text-base leading-relaxed text-stone-800 space-y-4">
+                <p className="indent-5 text-justify">
+                  Al estampar tu firma en este lienzo celestial, has activado de forma irrevocable el protocolo de acceso. Felicidades por dar el primer paso, pero te sugiero que no te confíes demasiado ni bajes la guardia.
+                </p>
+                <p className="indent-5 text-justify">
+                  Lo que viene a continuación no es un simple juego para pasar el rato. He preparado una serie de desafíos diseñados específicamente para poner a prueba tu memoria, tu paciencia y tu capacidad de atención. Un solo paso en falso y podrías quedar atrapado en este bucle digital por tiempo indefinitely. ¿De verdad crees que tienes lo necesario para superar mi prueba sin fallar ni una sola vez?
+                </p>
+                <p className="indent-5 text-justify">
+                  Te recomiendo que prestes mucha atención y actúes con cautela. Las reglas son estrictas y no habrá segundas oportunidades piadosas si fallas. El desafío ha comenzado y tu destino temporal ahora depende de tu agilidad mental. No digas que no te lo advertí.
                 </p>
               </div>
-              
-              <button
-                onClick={() => {
-                  setIsOpen(false);
-                  onClose?.();
-                }}
-                className="p-1.5 rounded-full hover:bg-stone-200/60 text-stone-400 hover:text-stone-850 transition-colors duration-250 cursor-pointer relative z-20"
-                title="Cerrar pacto"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
 
-            {/* Letter Body (Mocking & warning content with exquisite typography) */}
-            <div className="relative z-10 text-left font-serif text-sm sm:text-base leading-relaxed text-stone-800 space-y-4">
-              <p className="indent-5 text-justify">
-                Al estampar tu firma en este lienzo celestial, has activado de forma irrevocable el protocolo de acceso. Felicidades por dar el primer paso, pero te sugiero que no te confíes demasiado ni bajes la guardia.
-              </p>
-              <p className="indent-5 text-justify">
-                Lo que viene a continuación no es un simple juego para pasar el rato. He preparado una serie de desafíos diseñados específicamente para poner a prueba tu memoria, tu paciencia y tu capacidad de atención. Un solo paso en falso y podrías quedar atrapado en este bucle digital por tiempo indefinido. ¿De verdad crees que tienes lo necesario para superar mi prueba sin fallar ni una sola vez?
-              </p>
-              <p className="indent-5 text-justify">
-                Te recomiendo que prestes mucha atención y actúes con cautela. Las reglas son estrictas y no habrá segundas oportunidades piadosas si fallas. El desafío ha comenzado y tu destino temporal ahora depende de tu agilidad mental. No digas que no te lo advertí.
-              </p>
-            </div>
+              {/* Signature Block using custom Pinyon Script */}
+              <div className="pt-6 border-t border-amber-900/10 flex flex-col items-end">
+                <span className="font-serif italic text-xs text-stone-500 tracking-wider">Sellado con advertencia,</span>
+                <span className="font-signature text-3xl sm:text-4xl text-amber-800 font-medium tracking-wide mt-1.5">
+                  La que todo lo observa
+                </span>
+                <div className="w-20 h-[1px] bg-gradient-to-r from-transparent to-amber-700/40 mt-1" />
+              </div>
 
-            {/* Signature Block using custom Pinyon Script */}
-            <div className="relative z-10 pt-6 mt-4 border-t border-amber-900/10 flex flex-col items-end">
-              <span className="font-serif italic text-xs text-stone-500 tracking-wider">Sellado con advertencia,</span>
-              <span className="font-signature text-3xl sm:text-4xl text-amber-800 font-medium tracking-wide mt-1.5">
-                La que todo lo observa
-              </span>
-              <div className="w-20 h-[1px] bg-gradient-to-r from-transparent to-amber-700/40 mt-1" />
-            </div>
+              {/* Elegant Pact Interactive Seal Button at the very bottom */}
+              <div className="mt-8 flex flex-col items-center justify-center space-y-4">
+                <AnimatePresence>
+                  {isAccepted && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      className="p-4 rounded-xl bg-neutral-950 text-neutral-100 border border-amber-500/30 shadow-[0_10px_30px_rgba(217,119,6,0.15)] text-center max-w-xs relative overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-amber-950/20 blur-xl pointer-events-none" />
+                      <p className="relative z-10 text-xs tracking-wider leading-relaxed font-sans font-light text-amber-100">
+                        El juego ha comenzado. Tu firma está registrada y ya no hay marcha atrás. Más vale que tengas excelente memoria si quieres salir de aquí con vida.
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
-            {/* Elegant Pact Interactive Seal Button at the very bottom */}
-            <div className="relative z-10 mt-8 flex flex-col items-center justify-center space-y-4">
-              <AnimatePresence>
-                {isAccepted && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 15, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                    className="p-4 rounded-xl bg-neutral-950 text-neutral-100 border border-amber-500/30 shadow-[0_10px_30px_rgba(217,119,6,0.15)] text-center max-w-xs relative overflow-hidden"
+                {!isAccepted ? (
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setIsAccepted(true)}
+                    className="inline-flex items-center space-x-2 bg-gradient-to-r from-stone-900 via-stone-850 to-stone-900 text-amber-100 text-xs font-semibold uppercase tracking-[0.2em] px-6 py-3 rounded-full hover:from-stone-950 hover:to-stone-900 shadow-xl border border-amber-500/20 transition-all duration-300 cursor-pointer font-sans"
                   >
-                    <div className="absolute inset-0 bg-amber-950/20 blur-xl pointer-events-none" />
-                    <p className="relative z-10 text-xs tracking-wider leading-relaxed font-sans font-light text-amber-100">
-                      El juego ha comenzado. Tu firma está registrada y ya no hay marcha atrás. Más vale que tengas excelente memoria si quieres salir de aquí con vida.
-                    </p>
+                    <Star className="w-4 h-4 text-amber-500 fill-amber-500/30 animate-pulse" />
+                    <span>Aceptar el desafío</span>
+                  </motion.button>
+                ) : (
+                  <motion.div 
+                    initial={{ scale: 0.9 }}
+                    animate={{ scale: 1 }}
+                    className="flex flex-col items-center space-y-1.5 py-2"
+                  >
+                    <div className="flex items-center space-x-2 text-[10px] tracking-[0.25em] text-amber-700 font-extrabold uppercase">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-600 animate-spin-slow" />
+                      <span>Desafío Iniciado</span>
+                    </div>
+                    {/* Subtle golden digital stamp detail */}
+                    <div className="text-[8px] text-amber-600/50 tracking-widest uppercase font-sans">
+                      Testigo: El Ojo del Destino
+                    </div>
                   </motion.div>
                 )}
-              </AnimatePresence>
-
-              {!isAccepted ? (
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setIsAccepted(true)}
-                  className="inline-flex items-center space-x-2 bg-gradient-to-r from-stone-900 via-stone-850 to-stone-900 text-amber-100 text-xs font-semibold uppercase tracking-[0.2em] px-6 py-3 rounded-full hover:from-stone-950 hover:to-stone-900 shadow-xl border border-amber-500/20 transition-all duration-300 cursor-pointer font-sans"
-                >
-                  <Star className="w-4 h-4 text-amber-500 fill-amber-500/30 animate-pulse" />
-                  <span>Aceptar el desafío</span>
-                </motion.button>
-              ) : (
-                <motion.div 
-                  initial={{ scale: 0.9 }}
-                  animate={{ scale: 1 }}
-                  className="flex flex-col items-center space-y-1.5 py-2"
-                >
-                  <div className="flex items-center space-x-2 text-[10px] tracking-[0.25em] text-amber-700 font-extrabold uppercase">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-600 animate-spin-slow" />
-                    <span>Desafío Iniciado</span>
-                  </div>
-                  {/* Subtle golden digital stamp detail */}
-                  <div className="text-[8px] text-amber-600/50 tracking-widest uppercase font-sans">
-                    Testigo: El Ojo del Destino
-                  </div>
-                </motion.div>
-              )}
+              </div>
             </div>
-
           </motion.div>
         )}
       </AnimatePresence>
