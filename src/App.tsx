@@ -2149,23 +2149,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Botón flotante para acceder de inmediato al último nivel desde celular */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-auto max-w-[95%] flex justify-center">
-        <button
-          onClick={() => {
-            setStage(2);
-            setCurrentPhase('phase_three');
-            setGameStep('mirror_typing');
-            setMirrorPhraseIndex(0);
-            setIsMirrorTypingComplete(false);
-            setIsPastelPink(true);
-            setMusicPlaying(false);
-          }}
-          className="text-xs sm:text-sm uppercase tracking-[0.15em] text-white font-extrabold cursor-pointer bg-pink-600 hover:bg-pink-700 active:scale-95 px-6 py-3 rounded-full shadow-[0_8px_30px_rgb(236,72,153,0.3)] border border-pink-500 transition-all duration-200 whitespace-nowrap"
-        >
-          Ir al último nivel
-        </button>
-      </div>
+
     </div>
   );
 }
