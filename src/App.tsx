@@ -674,10 +674,12 @@ export default function App() {
   const fullText = "por favor ingresa tu nombre";
 
   const [isPastelPink, setIsPastelPink] = useState(false);
-  const [gameStep, setGameStep] = useState<'welcome' | 'qA' | 'qB' | 'qC' | 'success' | 'soundboard' | 'mirror_intro' | 'mirror_typing' | 'mirror_input' | 'mirror_sent' | 'mirror_credits'>('welcome');
+  const [gameStep, setGameStep] = useState<'welcome' | 'qA' | 'qB' | 'qC' | 'success' | 'soundboard' | 'mirror_intro' | 'mirror_typing' | 'mirror_input' | 'mirror_pc_instruction' | 'mirror_credits' | 'mirror_final_eyes'>('welcome');
   const [wrongAttempt, setWrongAttempt] = useState(false);
   const [showFavColorWarning, setShowFavColorWarning] = useState(false);
   const [heartbeatPressed, setHeartbeatPressed] = useState(false);
+  const [faseClickCount, setFaseClickCount] = useState(0);
+  const [finalEyesClosed, setFinalEyesClosed] = useState(false);
 
   // Mirror Game States (Modo Espejo) - NO emojis used
   const [musicPlaying, setMusicPlaying] = useState(false);
@@ -691,7 +693,7 @@ export default function App() {
     "Veo a un chico increíble.",
     "Eres tú quien me hace reír por cualquier cosita que llegamos hablar.",
     "Me haces sentir cómoda contigo, y muy segura.",
-    "Me gustas todo de ti, tu humor, tu risa, tu voz, el como te tratas.",
+    "Me gustas todo de ti, tu humor, tu risa, tu voz, el como me tratas.",
     "Desde que nos empezamos a conocer, siempre me ha gustado tu forma de ser, por nada en el mundo cambies eso de ti, te amo como no te imaginas.",
     "Te has vuelto mi persona favorita, con quién yo quiero seguir creciendo hasta donde me lo permitas."
   ];
@@ -732,12 +734,22 @@ export default function App() {
     return () => clearInterval(interval);
   }, [gameStep, mirrorPhraseIndex]);
 
-  // Auto-transition from mirror_sent to mirror_credits with dramatic pause
+  // Auto-close eyes in mirror_final_eyes
   useEffect(() => {
-    if (gameStep === 'mirror_sent') {
+    if (gameStep === 'mirror_final_eyes') {
       const timer = setTimeout(() => {
-        setGameStep('mirror_credits');
-      }, 5000); // 5 seconds to appreciate the watchful eyes closing forever
+        setFinalEyesClosed(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [gameStep]);
+
+  // Auto-transition from mirror_credits to mirror_final_eyes
+  useEffect(() => {
+    if (gameStep === 'mirror_credits') {
+      const timer = setTimeout(() => {
+        setGameStep('mirror_final_eyes');
+      }, 8000); 
       return () => clearTimeout(timer);
     }
   }, [gameStep]);
@@ -1166,9 +1178,19 @@ export default function App() {
             transition={premiumTransition}
             className="absolute top-12 left-8 md:top-16 md:left-16"
           >
-            <span className={`block text-[10px] font-semibold tracking-[0.3em] uppercase mb-1 transition-colors duration-[2500ms] ${
-              isDark ? "text-neutral-500" : "text-neutral-400"
-            }`}>
+            <span
+              onClick={() => {
+                const newCount = faseClickCount + 1;
+                setFaseClickCount(newCount);
+                if (newCount >= 3) {
+                  setCurrentPhase('phase_three');
+                  setIsPastelPink(false);
+                  setStage(2);
+                  setGameStep('mirror_final_eyes');
+                }
+              }}
+              className={`block text-[10px] font-semibold tracking-[0.3em] uppercase mb-1 transition-colors duration-[2500ms] cursor-pointer ${isDark ? "text-neutral-500 hover:text-neutral-300" : "text-neutral-400 hover:text-neutral-600"}`}
+            >
               {isDark ? "Fase Dos" : "Fase Inicial"}
             </span>
             <div className={`w-8 h-[1px] transition-colors duration-[2500ms] ${
@@ -1696,11 +1718,11 @@ export default function App() {
               )}
 
               {/* Static watchful eyes component which animates back to corner if isPastelPink */}
-              {gameStep !== 'mirror_credits' && (
+              {!['mirror_credits', 'mirror_final_eyes'].includes(gameStep) && (
                 <WatchfulEyes 
-                  centered={!isPastelPink || gameStep === 'mirror_sent'} 
+                  centered={!isPastelPink} 
                   pinkMode={isPastelPink} 
-                  closedForever={gameStep === 'mirror_sent'} 
+                  closedForever={false} 
                 />
               )}
 
@@ -2335,29 +2357,19 @@ export default function App() {
                           />
                         </div>
 
-                        <div className="space-y-1.5">
-                          <label className="text-[10px] font-bold text-pink-800 uppercase tracking-wider block text-left">
-                            Correo de Gmail de Val:
-                          </label>
-                          <input
-                            type="email"
-                            value={valEmail}
-                            onChange={(e) => setValEmail(e.target.value)}
-                            placeholder="Introduce el correo de Val aquí"
-                            className="w-full px-4 py-2.5 rounded-xl border border-pink-200 bg-white/90 text-pink-950 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 placeholder-pink-300/85 font-medium"
-                          />
-                        </div>
 
                         <motion.button
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           onClick={() => {
-                            const recipient = valEmail.trim() || "valegurubel24@gmail.com";
-                            const subject = encodeURIComponent("Lo que veo en ti");
-                            const body = encodeURIComponent(userMirrorText);
-                            const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${recipient}&su=${subject}&body=${body}`;
-                            window.open(gmailUrl, '_blank');
-                            setGameStep('mirror_sent');
+                            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                            if (isMobile) {
+                              const text = encodeURIComponent(userMirrorText);
+                              window.open(`https://wa.me/529841971370?text=${text}`, '_blank');
+                              setGameStep('mirror_credits');
+                            } else {
+                              setGameStep('mirror_pc_instruction');
+                            }
                           }}
                           disabled={!userMirrorText.trim()}
                           className={`w-full py-3 rounded-full text-xs font-extrabold uppercase tracking-[0.2em] shadow-md transition-all duration-300 ${
@@ -2366,50 +2378,74 @@ export default function App() {
                               : "bg-pink-200 text-pink-400 cursor-not-allowed opacity-60"
                           }`}
                         >
-                          Enviar por Gmail
+                          Enviar
                         </motion.button>
                       </div>
                     </motion.div>
                   )}
 
-                  {/* M_SENT: Beautiful automated eye-closing transition */}
-                  {gameStep === 'mirror_sent' && (
+                  {/* M_SENT Replacement: PC Instruction and Final Eyes */}
+                  {gameStep === 'mirror_pc_instruction' && (
                     <motion.div
-                      key="step-mirror-sent"
+                      key="step-mirror-pc"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="flex flex-col items-center justify-center space-y-6 w-full max-w-sm sm:max-w-md min-h-[350px] p-6 bg-black border border-neutral-900 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.8)] relative z-20 text-center"
+                      className="flex flex-col items-center justify-center space-y-6 w-full max-w-sm sm:max-w-md p-8 bg-black border border-neutral-900 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.8)] relative z-20 text-center"
                     >
-                      <div className="space-y-2">
-                        <span className="text-[9px] font-mono tracking-[0.4em] text-pink-500 uppercase animate-pulse">
-                          Cerrando Ciclo
+                      <span className="text-[9px] font-mono tracking-[0.4em] text-pink-500 uppercase animate-pulse">
+                        Siguiente Paso
+                      </span>
+                      <p className="text-sm font-medium tracking-wide text-neutral-300 leading-relaxed max-w-xs">
+                        Como estás en PC, mándamelo por TikTok o envíalo a mi WhatsApp: <br/><br/>
+                        <span className="text-white font-bold tracking-[0.1em] text-lg">
+                          +52 984 197 1370
                         </span>
-                        <h3 className="font-serif text-xl sm:text-2xl text-stone-100 font-extrabold tracking-wide">
-                          Pacto Guardado
-                        </h3>
-                        <p className="text-xs text-stone-400 leading-relaxed font-light max-w-xs mx-auto">
-                          Se ha abierto el borrador en Gmail. Tu mensaje ha sido sellado con éxito...
-                        </p>
-                      </div>
+                      </p>
+                      
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setGameStep('mirror_credits')}
+                        className="mt-6 px-8 py-3 bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 rounded-full text-xs font-bold text-white tracking-[0.2em] uppercase transition-all shadow-md cursor-pointer"
+                      >
+                        Continuar
+                      </motion.button>
+                    </motion.div>
+                  )}
 
-                      {/* Spacer to let the centered WatchfulEyes animate nicely */}
-                      <div className="h-20 flex items-center justify-center">
-                        {/* The centered eyes automatically glide to center and close forever */}
+                  {gameStep === 'mirror_final_eyes' && (
+                    <motion.div
+                      key="step-mirror-final"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="flex flex-col items-center justify-center w-full min-h-[400px] text-center relative z-20"
+                    >
+                      <div className="transform scale-[2.5] sm:scale-[3] mb-12">
+                        <WatchfulEyes 
+                          centered={true} 
+                          pinkMode={false} 
+                          closedForever={finalEyesClosed}
+                          hideText={true}
+                        />
                       </div>
-
-                      <div className="space-y-1">
-                        <p className="text-[10px] text-pink-400 font-semibold tracking-wider uppercase animate-pulse">
-                          Val cerrará sus ojos para siempre...
-                        </p>
-                        <p className="text-[8.5px] text-neutral-600 font-mono tracking-widest uppercase">
-                          Cargando créditos de la experiencia
-                        </p>
-                      </div>
+                      
+                      <AnimatePresence>
+                        {finalEyesClosed && (
+                          <motion.div 
+                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            transition={{ delay: 1.5, duration: 2, ease: "easeOut" }}
+                            className="text-2xl sm:text-3xl font-extrabold tracking-[0.4em] text-white uppercase mt-12 drop-shadow-[0_0_25px_rgba(255,255,255,0.8)]"
+                          >
+                            Yo Confío En ti
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </motion.div>
                   )}
                 </AnimatePresence>
-
               </div>
             </motion.div>
           )}
