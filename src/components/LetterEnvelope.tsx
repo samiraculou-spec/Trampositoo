@@ -175,11 +175,11 @@ export default function LetterEnvelope({ name, onClose }: LetterEnvelopeProps) {
             <div className="relative z-10 flex justify-between items-start border-b border-amber-900/10 pb-4 mb-5">
               <div className="text-left">
                 <h3 className="font-serif italic text-2xl sm:text-3xl text-stone-900 font-semibold tracking-wide pr-4">
-                  Querida, {formattedName}
+                  Atención, {formattedName}
                 </h3>
                 <p className="text-[9px] font-bold tracking-[0.25em] uppercase text-amber-800 mt-1.5 flex items-center gap-1.5 font-sans">
                   <Star className="w-2.5 h-2.5 text-amber-700 fill-amber-700" />
-                  Bajo el resplandor del Cosmos
+                  Bajo advertencia no hay engaño
                 </p>
               </div>
               
@@ -195,24 +195,24 @@ export default function LetterEnvelope({ name, onClose }: LetterEnvelopeProps) {
               </button>
             </div>
 
-            {/* Letter Body (Poetic content with exquisite typography) */}
+            {/* Letter Body (Mocking & warning content with exquisite typography) */}
             <div className="relative z-10 text-left font-serif text-sm sm:text-base leading-relaxed text-stone-800 space-y-4">
               <p className="indent-5 text-justify">
-                Al estampar tu nombre en este lienzo celestial, has sellado un pacto que trasciende el tiempo y el espacio. El firmamento entero es testigo de que tu alma ahora pertenece a este rincón de estrellas.
+                Al estampar tu firma en este lienzo celestial, has activado de forma irrevocable el protocolo de acceso. Felicidades por dar el primer paso, pero te sugiero que no te confíes demasiado ni bajes la guardia.
               </p>
               <p className="indent-5 text-justify">
-                No hay marcha atrás, ni portales que puedan regresarte, porque desde hoy tu lugar es aquí, bajo la custodia eterna de mi luna y mis constelaciones.
+                Lo que viene a continuación no es un simple juego para pasar el rato. He preparado una serie de desafíos diseñados específicamente para poner a prueba tu memoria, tu paciencia y tu capacidad de atención. Un solo paso en falso y podrías quedar atrapado en este bucle digital por tiempo indefinido. ¿De verdad crees que tienes lo necesario para superar mi prueba sin fallar ni una sola vez?
               </p>
               <p className="indent-5 text-justify">
-                No temas, pues este cautiverio voluntario es de la más dulce devoción. Estás a salvo bajo mi luz. No te soltaré, ni permitiré que te vayas jamás de mi lado.
+                Te recomiendo que prestes mucha atención y actúes con cautela. Las reglas son estrictas y no habrá segundas oportunidades piadosas si fallas. El desafío ha comenzado y tu destino temporal ahora depende de tu agilidad mental. No digas que no te lo advertí.
               </p>
             </div>
 
             {/* Signature Block using custom Pinyon Script */}
             <div className="relative z-10 pt-6 mt-4 border-t border-amber-900/10 flex flex-col items-end">
-              <span className="font-serif italic text-xs text-stone-500 tracking-wider">Sellado en el vacío,</span>
+              <span className="font-serif italic text-xs text-stone-500 tracking-wider">Sellado con advertencia,</span>
               <span className="font-signature text-3xl sm:text-4xl text-amber-800 font-medium tracking-wide mt-1.5">
-                Tu Guardián Celestial
+                La que todo lo observa
               </span>
               <div className="w-20 h-[1px] bg-gradient-to-r from-transparent to-amber-700/40 mt-1" />
             </div>
@@ -229,7 +229,7 @@ export default function LetterEnvelope({ name, onClose }: LetterEnvelopeProps) {
                   >
                     <div className="absolute inset-0 bg-amber-950/20 blur-xl pointer-events-none" />
                     <p className="relative z-10 text-xs tracking-wider leading-relaxed font-sans font-light text-amber-100">
-                      ✨ Tu alma está ligada para siempre al cosmos. No hay forma de escapar... Tu destino está sellado con amor eterno. 💕
+                      El juego ha comenzado. Tu firma está registrada y ya no hay marcha atrás. Más vale que tengas excelente memoria si quieres salir de aquí con vida.
                     </p>
                   </motion.div>
                 )}
@@ -242,8 +242,8 @@ export default function LetterEnvelope({ name, onClose }: LetterEnvelopeProps) {
                   onClick={() => setIsAccepted(true)}
                   className="inline-flex items-center space-x-2 bg-gradient-to-r from-stone-900 via-stone-850 to-stone-900 text-amber-100 text-xs font-semibold uppercase tracking-[0.2em] px-6 py-3 rounded-full hover:from-stone-950 hover:to-stone-900 shadow-xl border border-amber-500/20 transition-all duration-300 cursor-pointer font-sans"
                 >
-                  <Heart className="w-4 h-4 text-rose-500 fill-rose-500 animate-pulse" />
-                  <span>Aceptar mi destino</span>
+                  <Star className="w-4 h-4 text-amber-500 fill-amber-500/30 animate-pulse" />
+                  <span>Aceptar el desafío</span>
                 </motion.button>
               ) : (
                 <motion.div 
@@ -253,11 +253,11 @@ export default function LetterEnvelope({ name, onClose }: LetterEnvelopeProps) {
                 >
                   <div className="flex items-center space-x-2 text-[10px] tracking-[0.25em] text-amber-700 font-extrabold uppercase">
                     <Sparkles className="w-3.5 h-3.5 text-amber-600 animate-spin-slow" />
-                    <span>Pacto Celestial Consumado</span>
+                    <span>Desafío Iniciado</span>
                   </div>
                   {/* Subtle golden digital stamp detail */}
                   <div className="text-[8px] text-amber-600/50 tracking-widest uppercase font-sans">
-                    Testigo: Constelación Mayor
+                    Testigo: El Ojo del Destino
                   </div>
                 </motion.div>
               )}
